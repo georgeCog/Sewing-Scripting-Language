@@ -14,7 +14,7 @@ The most obvious way to represent one of these patterns (the method that first o
 ## Design Philosohpy 
 As stated before the main goal of the language is for it to be writen as similarly to the verbous instructions provided on the page. The compiler can then do the work from there. A secondary goal is for it ro be as simple as possible both to make it esier to understand and learn and because writing compilers is hard enough as it is.
 
-You can fing the current Syntax documentation along with plans for future feeatures [here](language_rules.md).
+You can fing the current Syntax documentation along with plans for future feeatures **[here](language_rules.md)**.
 
 ## How to Use
 
