@@ -83,7 +83,8 @@ Lines*back => ;// puts back into Lines with id null
 | Set Mag | ^ | {Vector}^{Length} | Vector with same angle and Length as magnitude |
 | Scalar Mult | x | {Point}x{Length} | Scalar multiplication of Point by Length |
 | Scalar Division | / | {Point}/{Length} | Scalar multiplication of Point by 1/Length |
-| Magnitude Add | x | {Point}x{Length} | POint as a Vector with magnitude + Length |
+| Magnitude Add | + | {Point}+{Length} | Point as a Vector with magnitude + Length |
+| Magnitude Sub | - | {Point}-{Length} | Point as a Vector with magnitude - Length |
 | Mult | x | {Length A}x{Length B} | A times B |
 | Div | / | {Length A}/{Length B} | A divided by B |
 | Add | + | {Length A}+{Length B} | A plus B |
