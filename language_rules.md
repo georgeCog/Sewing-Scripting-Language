@@ -16,7 +16,7 @@ All lines end with ";" like in JavaScript.
 To begin there are five data types I can foresee being necessary, not including those related to lists:
 
 | Pattern component | Computer representation | Constructor | Example |
-| ----------- | ----------- | ----------- | ----------- | ----------- |
+| ----------- | ----------- | ----------- | ----------- |
 | Length (cm) | Positive Float | {Digit} | 2 or 4.5 or .9 |
 | Point/Vector | (Float, Float) | ({Something}) | (4,6) or (a->b) |
 | Line | (Point, Point) | [{Something}] | [(5,6),a] or [a->b] |
@@ -163,4 +163,4 @@ TODO: continue
 ```
 
 ### Reference Page
-![Reference Page](images\example_instruction_page.jpg)
+![Reference Page](images/example_instruction_page.jpg)
