@@ -16,7 +16,7 @@ There are 7 data types, the first two are for 'pointing' to data and are called 
 | ----------- | ----------- | ----------- |
 | Index | Non-Negative Int | *Number |
 | StringID | String | *String |
-| Length/Angle | Float | Number |
+| Length/Angle/Ratio | Float | Number |
 | Point | Pair of FLoats | ( ) |
 | Vector | Pair of Floats | < > |
 | Line | Pair of Points | [ ] |
@@ -37,9 +37,7 @@ Lists:
 | Lines | StringID | Line | n | y |
 | Guides | STringID | Guide | n | y |
 
-### Functions
-
-#### Get and Set
+### Get and Set
 
 The Get function '\*' is the only function that can read from the lists. It returns the item from the list to it's left with the ID to it's right: List\*ID   
 This is also how you construct IDs as this is the only context they exist in. 
@@ -77,9 +75,9 @@ Similarly, when getting from Points, you my ommit the list name as this is the m
     (2,4) => * // Store this point in Points with no reference
 ```
 
-#### Constructors
+### Constructors
 
-With the exception of ID's Lengths and Angles who's construction has already been explained Data is constructed within a set of brackets. 
+With the exception of ID's Lengths Angles and Ratios who's construction has already been explained Data is constructed within a set of brackets. 
 *The following is the bare minimum constructors to be expanded on*
 
 - Point (Length,Length)
@@ -87,47 +85,44 @@ With the exception of ID's Lengths and Angles who's construction has already bee
 - Line [Point,Point]
 - Guide {Point,Angle}
 
-## Example Code
-*Out of Date*
+Point:
 
-*"///////Something//////// comments denote what part of the reference instructions this part of code represents*
+- (Length,Length) - Gets Point at given x and y coordinates
+- (Length) - Equivilent to (Length,Length)
+- (Point->Point*Ratio+Length) - get the point on the line between the points ratio length along plus the Length
+
+Vector:
+
+-Vector <Length,Angle>
+
+### Functions
+
+| Name | Symbol | Syntax | Description |
+| ----------- | ----------- | ----------- | ----------- |
+| Add Scalar | + | Length+Length | Add together the two scalar values |
+| Sub Scalar | - | Length-Length | Subtract the second scalar from the first |
+| Mult Scalar | * | Length*Length | Multiply the two scalar values |
+| Div Scalar | / | Length /Ratio | Divide the first scalar by the second|
+| Add Vector | : | Point:Vector | Add the two as if they were vectors and return the result as a point |
+
+### Initialisation
+
+The first non-blank/commented out line of the code must contain a comma delimited list of all of the IDs of values to be input into Measures
+
+e.g.
+```
+SHOULDER,CHEST,WAIST
+```
+
+## Example Code
+
 ```
 /////////Bodice Block//////////
-////////Measurements Layed Out//////////
-{
-    NW, // Naip to waist
-    BUST,
-    BACK,
-    SHOULDER,
-    CHEST,
-    WAIST,
-    NBC // Neck base circumference
-}
-/////////Square lines out from 0///////
-(0) => *0;
-(WAIST+2).90 => *1;
-[*0,*1] => ;
-(*BUST/2+.5) => *2;
-[*0,*2] => ;
-*2:*1 => Vars*corner;
-[*1,Vars*corner] => ;
-[*2, Vars*corner] => *cf;
-(2).90 => *3; square once we have 8
-*3:(*3:*1)/2+4 => *4;
-[*4,([*4,*4:(1)]|Vars*cf)] =>; // Squaring off at angle
-                            Consider making function
-*4:(3).270 => *5;
-([*5,*5:(1)]|Vars*cf) => *6;
-[*5,*6] => ;// Squaring off at angle
-*5:(*5->*3)/2 => *7;
-///////For back neck///////////
-*NBC/5-.16 => *8;
-([*3,*3:(1)]|[*8,*8:(1).90]) => Vars*temp; // Squaring off at angle
-[*3,temp] => ;
-[*8,temp] => ;
-////////For front neck/////////
+NAPE_WAIST,BUST,BACK,SHOULDER,CHEST,WAIST
 
-TODO: continue
+(0) => *0
+*0:<*NAPE_WAIST+2,90>=> *1
+*0:<*BUST/2+.5,0> => *2
 ```
 
 ### Reference Page
