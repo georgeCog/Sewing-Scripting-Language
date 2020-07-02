@@ -1,0 +1,8 @@
+{
+  "name": "sewing-scripting-language",
+  "version": "1.0.0",
+  "description": "A compiler to convert a script representing a sewin gpattern to javascript code that generates it as an object to be rendered",
+  "main": "index.js",
+  "author": "George Cog <s182343@ed.ac.uk>",
+  "license": "MIT"
+}
