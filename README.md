@@ -3,8 +3,8 @@
 ## Aim
 The aim of this language is to provide a way to write down the steps layed out to produce sewing patterns, in a format that a computer can render, as you work your way through the writen instructions. The syntax is designed to have each section of code flow similarly to the flow of the writen instructions.
 ### An example pattern with instructions
-![An example instruction set](images\example_instruction_page.jpg)
-![An exampole pattern rendering](images\example_pattern_page.jpg)
+![An example instruction set](images/example_instruction_page.jpg)
+![An exampole pattern rendering](images/example_pattern_page.jpg)
 
 ## Why this method?
 The most obvious way to represent one of these patterns (the method that first occured to me) was to simply store the coordinates of each point involved. This can become quite difficult once you account for how the shapes are formed based off measured lengths. I don't doubt that such a system would be possible (especially for the simpler patterns) however the link between these instructions and provided image and representation is not very direct. The conversion requires quite a lot of problem solving unique to each pattern and thus more room for error such as distances calculating wrong or points being missed out all together.
