@@ -19,7 +19,7 @@ To begin there are five data types I can foresee being necessary, not including 
 | ----------- | ----------- | ----------- | ----------- |
 | Length (cm) | Positive Float | {Digit} | 2 or 4.5 or .9 |
 | Point/Vector | (Float, Float) | ({Something}) | (4,6) or (a->b) |
-| Line | (Point, Point) | [{Something}] | [(5,6),a] or [a->b] |
+| Line | (Point, Point) | [{Something}] | [(5,6),a] |
 | Text | String | "{String}" | "Chest Width" |
 | Tag | ( Point or Line , String) | <{Point or Line},{Text or Length}>| <(6,.5),"Neck Line"> |
 
