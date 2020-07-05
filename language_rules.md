@@ -9,121 +9,96 @@
 
 White spaces are ignored except for next line wich represents the next instruction.
 
+### Compilation
+
+A pattern script will compile to a JavaScript function. This function will take a list of lengths as it's arguments and return a list of points and a list of lines that can then be rendered.
+
 ### Data Types
-There are 7 data types, the first two are for 'pointing' to data and are called IDs.
 
-| Name | Data | Constructor |
-| ----------- | ----------- | ----------- |
-| Index | Non-Negative Int | *Number |
-| StringID | String | *String |
-| Length/Angle/Ratio | Float | Number |
-| Point | Pair of FLoats | ( ) |
-| Vector | Pair of Floats | < > |
-| Line | Pair of Points | [ ] |
-| Guide | Pair of Floats | { } |
+| Name | Eample Declaration in Code |Computer Representation | Description |
+| -------- | -------- | -------- | -------- |
+| Length | 10 or 1.8 or WAIST |Float | A length in cm |
+| Direction | 90 or 8.5 |Float | An angle clockwise from vector (1,0) in degrees |
+| Point Reference | 0 or 5 | Int | Reference to point with given index 
+| Point | n/a |(Float, Float, Point Reference) | (x,y,i) -> Point at coordinates x,y with the index i |
+| Line Reference | bust_line | String | Reference to line with name String |
+| Line | n/a |(Point Reference,Point Reference,Line Reference) | (a,b) -> Line between a and b referenced by the given Line Reference |
+| ExtLine | n/a | (Point Reference,Direction,Line Reference) | Unbounded line with origin Point in given Direction referenced by the given Line Reference|
 
-All data is stored in one of 5 lists containing ID, Data pairs.
-The Measures list contains the measurments input to the program.
-Output lists are output by the program to go on to be rendered.
+A list of Point, Line and ExtLine is output by the compiled function.
 
-StringID's are all lower case except when used in Measures where they are all upper case.
+### Initilization 
 
-Lists:
-| Name | ID | Data Value | Input | Output |
-| ----------- | ----------- | ----------- | ----------- | ----------- |
-| Measures | StringID | Length | y | n |
-| Vars | StringID | Any Data Type (Except IDs) | n | n |
-| Points | Index | Point | n | y |
-| Lines | StringID | Line | n | y |
-| Guides | STringID | Guide | n | y |
-
-### Get and Set
-
-The Get function '\*' is the only function that can read from the lists. It returns the item from the list to it's left with the ID to it's right: List\*ID   
-This is also how you construct IDs as this is the only context they exist in. 
-When used after the set function the get function instead represents the 'location' ID in List.
-
-The Set function '=>' is the only function that can write to the lists. It is preceded by data and followed by a 'location' reference as explained above. Data => List\*ID
-
-Every line ends with a set statement. e.g.
-
+Before instructions are layed out in the code, the input Length names and their ease allowance (if applicable) must be stated. Each on a new line. Length names must be in all caps and underscores. Ease allowance is placed after ':' if required. e.g.
 ```
-    (0,0) => Points*0 //Add the origin to points index 0
-    [Points*corner,(5,5)] => Line*back //Add the line from corner to 5,5 to line with value back
-    {Points*corner,90} => Vars*cross // Add vertical line from corner as a temporary variable, cross
-
+ARM_HOLE //Arm hole circumference
+TOP_SLEEVE
+TOP_ARM:5 //Top arm measurement with 5cm ease
+WRIST:6.5 //Wrist measurement with 6.5cm ease
 ```
+The Points list starts with the point (0,0,0) i.e. The origin with index 0
 
-**Abreviations**
+### Instruction Syntax
 
-When Setting:
-
-Points, Guides and Lines can be put into their exclusive lists without having to reference the list name. Just write '\*ID' to put the value in.
-If you only want to output some data without a label, and don't need to reference it again, you can ommit the ID. Just write 'Data\*' to output the value.
-
-When Getting:
-
-When getting from Measures you can choose to ommit the list name as it can be identified by the capitalised name. e.g. '\*SHOULDER'
-
-Similarly, when getting from Points, you my ommit the list name as this is the most commonly referenced list. e.g. '\*5'
-
-
+Each instruction creates a line and begins with a line deffinition,which takes the format:
 ```
-    [*0,(4,4)] => *diagonal // store the line from point 0 to 4,4 in Lists named diagonal
-    <*SHOULDER,90> => Vars*shldr_dwn // Store vector of length SHOULDERin a temporary variable
-    [(0,0),(1,5)] => Lines* // Store this line in Lines with no reference
-    (2,4) => * // Store this point in Points with no reference
+{Point A Reference}->{Point B Reference}{Optional '^' + Line Reference}
+//e.g.
+2->3 //Will create Line (2,3,null)
+4->6^CB //Wille create :ine (4,6,"CB")
 ```
+- Point A must be an existing point
+- Point B can be an existing or non-existing point
 
-### Constructors
+If Point B already exists then the Line (PointA, Point B) is added to the output lines list
 
-With the exception of ID's Lengths Angles and Ratios who's construction has already been explained Data is constructed within a set of brackets. 
-*The following is the bare minimum constructors to be expanded on*
-
-- Point (Length,Length)
-- Vector <Length,Angle>
-- Line [Point,Point]
-- Guide {Point,Angle}
-
-Point:
-
-- (Length,Length) - Gets Point at given x and y coordinates
-- (Length) - Equivilent to (Length,Length)
-- (Point->Point*Ratio+Length) - get the point on the line between the points ratio length along plus the Length
-
-Vector:
-
--Vector <Length,Angle>
+If Point B does not exist then information on how to get to B from A is given after a ':'. This is then used to generate Point B and add it to the output Points list. e.g.
+```
+0->1:{Something here}
+```
+#### Direction and Length
+To generate Point 1 from Point 0 by traveling a given Length in a given Direction use the syntax:
+```
+{Length}<{Direction}
+```
+e.g.
+```
+0->1:WRIST<90
+```
+#### Vector
+To generate Point 1 by traveling a given vector with/without modified magnitude use the syntax:
+```
+[{Point A} -> {Point B}] // Vector from A to B
+[{Point A} -> {Point B}]/2+5 // Vector from A to B with magnitude divided by 2 plus 5
+```
+e.g.
+```
+2->3:[2->4]/2+5.5
+```
+#### Squaring Off
+If you need to square off the point created by the instruction you can end it with | followed by 'SA' (Square across) or 'SD' (Square down) optionaly followed by '^' and a reference string for the generated line. e.g.
+```
+2->3:5<-90|SA^back //Creates Line (2,3) and ExtLine (2,0,"back")
+3->6|SD // Creates line (3,6) and ExtLine (6,90,null)
+```
 
 ### Functions
 
-| Name | Symbol | Syntax | Description |
-| ----------- | ----------- | ----------- | ----------- |
-| Add Scalar | + | Length+Length | Add together the two scalar values |
-| Sub Scalar | - | Length-Length | Subtract the second scalar from the first |
-| Mult Scalar | * | Length*Length | Multiply the two scalar values |
-| Div Scalar | / | Length /Ratio | Divide the first scalar by the second|
-| Add Vector | : | Point:Vector | Add the two as if they were vectors and return the result as a point |
-
-### Initialisation
-
-The first non-blank/commented out line of the code must contain a comma delimited list of all of the IDs of values to be input into Measures
-
-e.g.
-```
-SHOULDER,CHEST,WAIST
-```
+Lengths can be created using the oporators +,-,*,/ in the same way they act on Floats in JavaScript
 
 ## Example Code
 
 ```
-/////////Bodice Block//////////
-NAPE_WAIST,BUST,BACK,SHOULDER,CHEST,WAIST
-
-(0) => *0
-*0:<*NAPE_WAIST+2,90>=> *1
-*0:<*BUST/2+.5,0> => *2
+///////////Bodice Block////////////
+N_W //Nape to waist
+BUST:10
+BACK:1.6 //Back width
+SHOULDER
+CHEST:0.6 //Chest width
+Waist:4
+///////////Instructions/////////////
+0->1^CB : N_W+2<90 | SA
+0->2 : BUST/2+0.5<0 | SD^CF
+0->3 : 2<90 |SA
+3->4 : [3->1]+4 | SA^bust_line
 ```
-
-### Reference Page
-![Reference Page](images/example_instruction_page.jpg)
